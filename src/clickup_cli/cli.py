@@ -5,9 +5,10 @@ from clickup_cli.commands.config_cmd import config_group
 
 @click.group()
 @click.version_option()
-def cli():
+@click.pass_context
+def cli(ctx):
     """CLI tool for managing ClickUp tasks."""
-    pass
+    ctx.ensure_object(dict)
 
 
 cli.add_command(config_group)

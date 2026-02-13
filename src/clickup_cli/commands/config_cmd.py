@@ -17,7 +17,31 @@ def config_group():
 def config_init():
     """Set up ClickUp CLI configuration."""
     api_token = click.prompt("Enter your ClickUp API token", hide_input=True)
-    config = {"api_token": api_token}
+
+    from clickup_cli.client import ClickUpClient
+
+    client = ClickUpClient(api_token)
+    teams = client.get_teams()
+
+    if not teams:
+        console.print("[red]No workspaces found for this token.[/red]")
+        raise SystemExit(1)
+
+    if len(teams) == 1:
+        workspace = teams[0]
+        console.print(f"Using workspace: [bold]{workspace['name']}[/bold]")
+    else:
+        console.print("Available workspaces:")
+        for i, t in enumerate(teams, 1):
+            console.print(f"  {i}. {t['name']}")
+        choice = click.prompt("Select workspace", type=int, default=1)
+        workspace = teams[choice - 1]
+
+    config = {
+        "api_token": api_token,
+        "workspace_id": workspace["id"],
+        "workspace_name": workspace["name"],
+    }
     save_config(config)
     console.print(f"[green]Config saved to {CONFIG_FILE}[/green]")
 
