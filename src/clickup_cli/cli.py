@@ -1,6 +1,7 @@
 import click
 
 from clickup_cli.commands.config_cmd import config_group
+from clickup_cli.commands.folder import folder_group
 from clickup_cli.commands.space import space_group
 
 
@@ -14,3 +15,4 @@ def cli(ctx):
 
 cli.add_command(config_group)
 cli.add_command(space_group)
+cli.add_command(folder_group)
