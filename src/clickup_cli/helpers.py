@@ -28,3 +28,21 @@ def get_workspace_id() -> str:
         console.print("[red]No workspace_id in config. Run 'clickup config init'.[/red]")
         raise SystemExit(1)
     return wid
+
+
+def resolve_alias(value: str, expected_type: str | None = None) -> str:
+    """Resolve @alias to ID. Pass through raw IDs unchanged."""
+    if not value.startswith("@"):
+        return value
+    alias_name = value[1:]
+    config = load_config()
+    aliases = config.get("aliases", {})
+    if alias_name not in aliases:
+        console.print(f"[red]Alias '{alias_name}' not found. Run 'clickup alias list'.[/red]")
+        raise SystemExit(1)
+    stored = aliases[alias_name]  # e.g. "space:12345"
+    alias_type, alias_id = stored.split(":", 1)
+    if expected_type and alias_type != expected_type:
+        console.print(f"[red]Alias '{alias_name}' is a {alias_type}, but a {expected_type} ID is expected.[/red]")
+        raise SystemExit(1)
+    return alias_id

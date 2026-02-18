@@ -1,7 +1,7 @@
 import click
 from rich.console import Console
 
-from clickup_cli.helpers import get_client, get_workspace_id
+from clickup_cli.helpers import get_client, get_workspace_id, resolve_alias
 from clickup_cli.formatting import print_folders
 
 console = Console()
@@ -17,6 +17,8 @@ def folder_group():
 @click.option("--space-id", default=None, help="Space ID to list folders from.")
 def folder_list(space_id):
     """List folders in a space."""
+    if space_id:
+        space_id = resolve_alias(space_id, "space")
     client = get_client()
 
     if not space_id:

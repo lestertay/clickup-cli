@@ -1,7 +1,7 @@
 import click
 from rich.console import Console
 
-from clickup_cli.helpers import get_client
+from clickup_cli.helpers import get_client, resolve_alias
 from clickup_cli.formatting import print_task_detail, print_tasks
 
 console = Console()
@@ -9,7 +9,7 @@ console = Console()
 
 @click.group("task")
 def task_group():
-    """Manage ClickUp tasks."""
+    """Manage ClickUp tasks!"""
     pass
 
 
@@ -19,6 +19,7 @@ def task_group():
 @click.option("--assignee", default=None, help="Filter by assignee.")
 def task_list(list_id, status, assignee):
     """List tasks in a ClickUp list."""
+    list_id = resolve_alias(list_id, "list")
     client = get_client()
     filters = {}
     if status:
@@ -49,6 +50,7 @@ def task_view(task_id):
 @click.option("--tag", multiple=True, help="Tag(s) to add.")
 def task_create(list_id, name, description, status, priority, assignee, due_date, tag):
     """Create a new task."""
+    list_id = resolve_alias(list_id, "list")
     client = get_client()
     task_data = {"name": name}
     if description:

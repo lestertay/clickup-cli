@@ -1,5 +1,6 @@
 import click
 
+from clickup_cli.commands.alias import alias_group
 from clickup_cli.commands.config_cmd import config_group
 from clickup_cli.commands.folder import folder_group
 from clickup_cli.commands.list import list_group
@@ -15,6 +16,7 @@ def cli(ctx):
     ctx.ensure_object(dict)
 
 
+cli.add_command(alias_group)
 cli.add_command(config_group)
 cli.add_command(space_group)
 cli.add_command(folder_group)

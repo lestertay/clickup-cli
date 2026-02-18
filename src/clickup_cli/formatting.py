@@ -1,9 +1,24 @@
+from datetime import datetime, timezone
+
 from rich.console import Console
 from rich.table import Table
 
 from clickup_cli.models import Folder, Space, Task, TaskList
 
 console = Console()
+
+
+def _format_due_date(due_date: str | None) -> str:
+    """Convert Unix timestamp (ms) to local human-readable date."""
+    if not due_date:
+        return "-"
+    try:
+        ts = int(due_date) / 1000
+        dt = datetime.fromtimestamp(ts).astimezone()
+        return dt.strftime("%m-%d %H:%M")
+    except (ValueError, OSError):
+        return due_date
+
 
 PRIORITY_COLORS = {
     "urgent": "red",
@@ -58,7 +73,7 @@ def print_tasks(tasks: list[Task]) -> None:
             t.status,
             f"[{priority_style}]{t.priority or '-'}[/{priority_style}]" if priority_style else (t.priority or "-"),
             ", ".join(t.assignees) or "-",
-            t.due_date or "-",
+            _format_due_date(t.due_date),
             ", ".join(t.tags) or "-",
         )
 
@@ -70,7 +85,7 @@ def print_task_detail(task: Task) -> None:
     console.print(f"  Status:    {task.status}")
     console.print(f"  Priority:  {task.priority or '-'}")
     console.print(f"  Assignees: {', '.join(task.assignees) or '-'}")
-    console.print(f"  Due Date:  {task.due_date or '-'}")
+    console.print(f"  Due Date:  {_format_due_date(task.due_date)}")
     console.print(f"  Tags:      {', '.join(task.tags) or '-'}")
     if task.description:
         console.print(f"\n  {task.description}")
