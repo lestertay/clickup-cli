@@ -14,9 +14,9 @@ def task_group():
 
 
 @task_group.command("list")
-@click.option("--list-id", required=True, help="List ID to show tasks from.")
-@click.option("--status", default=None, help="Filter by status.")
-@click.option("--assignee", default=None, help="Filter by assignee.")
+@click.option("-l", "--list-id", required=True, help="List ID to show tasks from.")
+@click.option("-s", "--status", default=None, help="Filter by status.")
+@click.option("-a", "--assignee", default=None, help="Filter by assignee.")
 def task_list(list_id, status, assignee):
     """List tasks in a ClickUp list."""
     list_id = resolve_alias(list_id, "list")
@@ -40,14 +40,14 @@ def task_view(task_id):
 
 
 @task_group.command("create")
-@click.option("--list-id", required=True, help="List ID to create the task in.")
-@click.option("--name", required=True, help="Task name.")
-@click.option("--description", default=None, help="Task description.")
-@click.option("--status", default=None, help="Task status.")
-@click.option("--priority", type=click.Choice(["1", "2", "3", "4"], case_sensitive=False), default=None, help="Priority: 1=urgent, 2=high, 3=normal, 4=low.")
-@click.option("--assignee", default=None, help="Assignee user ID.")
-@click.option("--due-date", default=None, help="Due date (YYYY-MM-DD).")
-@click.option("--tag", multiple=True, help="Tag(s) to add.")
+@click.option("-l", "--list-id", required=True, help="List ID to create the task in.")
+@click.option("-n", "--name", required=True, help="Task name.")
+@click.option("-d", "--description", default=None, help="Task description.")
+@click.option("-s", "--status", default=None, help="Task status.")
+@click.option("-p", "--priority", type=click.Choice(["1", "2", "3", "4"], case_sensitive=False), default=None, help="Priority: 1=urgent, 2=high, 3=normal, 4=low.")
+@click.option("-a", "--assignee", default=None, help="Assignee user ID.")
+@click.option("-D", "--due-date", default=None, help="Due date (YYYY-MM-DD).")
+@click.option("-t", "--tag", multiple=True, help="Tag(s) to add.")
 def task_create(list_id, name, description, status, priority, assignee, due_date, tag):
     """Create a new task."""
     list_id = resolve_alias(list_id, "list")
@@ -75,13 +75,13 @@ def task_create(list_id, name, description, status, priority, assignee, due_date
 
 @task_group.command("update")
 @click.argument("task_id")
-@click.option("--name", default=None, help="New task name.")
-@click.option("--description", default=None, help="New description.")
-@click.option("--status", default=None, help="New status.")
-@click.option("--priority", type=click.Choice(["1", "2", "3", "4"], case_sensitive=False), default=None, help="Priority: 1=urgent, 2=high, 3=normal, 4=low.")
-@click.option("--assignee", default=None, help="Assignee user ID to add.")
-@click.option("--due-date", default=None, help="Due date (YYYY-MM-DD).")
-@click.option("--tag", multiple=True, help="Tag(s) to set.")
+@click.option("-n", "--name", default=None, help="New task name.")
+@click.option("-d", "--description", default=None, help="New description.")
+@click.option("-s", "--status", default=None, help="New status.")
+@click.option("-p", "--priority", type=click.Choice(["1", "2", "3", "4"], case_sensitive=False), default=None, help="Priority: 1=urgent, 2=high, 3=normal, 4=low.")
+@click.option("-a", "--assignee", default=None, help="Assignee user ID to add.")
+@click.option("-D", "--due-date", default=None, help="Due date (YYYY-MM-DD).")
+@click.option("-t", "--tag", multiple=True, help="Tag(s) to set.")
 def task_update(task_id, name, description, status, priority, assignee, due_date, tag):
     """Update an existing task."""
     client = get_client()

@@ -14,8 +14,8 @@ def list_group():
 
 
 @list_group.command("list")
-@click.option("--folder-id", default=None, help="Folder ID to list from.")
-@click.option("--space-id", default=None, help="Space ID for folderless lists.")
+@click.option("-f", "--folder-id", default=None, help="Folder ID to list from.")
+@click.option("-s", "--space-id", default=None, help="Space ID for folderless lists.")
 def list_list(folder_id, space_id):
     """List lists in a folder or space."""
     if folder_id:

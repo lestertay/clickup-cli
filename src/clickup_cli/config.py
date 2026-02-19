@@ -10,13 +10,13 @@ def load_config() -> dict:
     """Load config from ~/.clickup-cli/config.yaml."""
     if not CONFIG_FILE.exists():
         raise FileNotFoundError(
-            f"Config not found at {CONFIG_FILE}. Run 'clickup config init' to set up."
+            f"Config not found at {CONFIG_FILE}. Run 'cl config init' to set up."
         )
     with open(CONFIG_FILE) as f:
         config = yaml.safe_load(f)
     if not config or "api_token" not in config:
         raise ValueError(
-            "Config is missing 'api_token'. Run 'clickup config init' to fix."
+            "Config is missing 'api_token'. Run 'cl config init' to fix."
         )
     return config
 

@@ -15,9 +15,9 @@ def alias_group():
 
 @alias_group.command("set")
 @click.argument("name")
-@click.option("--space-id", default=None, help="Space ID to alias.")
-@click.option("--folder-id", default=None, help="Folder ID to alias.")
-@click.option("--list-id", default=None, help="List ID to alias.")
+@click.option("-s", "--space-id", default=None, help="Space ID to alias.")
+@click.option("-f", "--folder-id", default=None, help="Folder ID to alias.")
+@click.option("-l", "--list-id", default=None, help="List ID to alias.")
 def alias_set(name, space_id, folder_id, list_id):
     """Set an alias for a resource ID."""
     provided = [(k, v) for k, v in [("space", space_id), ("folder", folder_id), ("list", list_id)] if v]
@@ -38,7 +38,7 @@ def alias_list():
     config = load_config()
     aliases = config.get("aliases", {})
     if not aliases:
-        console.print("[yellow]No aliases defined. Use 'clickup alias set' to create one.[/yellow]")
+        console.print("[yellow]No aliases defined. Use 'cl alias set' to create one.[/yellow]")
         return
     table = Table(title="Aliases")
     table.add_column("Name", style="cyan")

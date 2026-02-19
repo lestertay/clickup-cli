@@ -25,7 +25,7 @@ def get_workspace_id() -> str:
         raise SystemExit(1)
     wid = config.get("workspace_id")
     if not wid:
-        console.print("[red]No workspace_id in config. Run 'clickup config init'.[/red]")
+        console.print("[red]No workspace_id in config. Run 'cl config init'.[/red]")
         raise SystemExit(1)
     return wid
 
@@ -38,7 +38,7 @@ def resolve_alias(value: str, expected_type: str | None = None) -> str:
     config = load_config()
     aliases = config.get("aliases", {})
     if alias_name not in aliases:
-        console.print(f"[red]Alias '{alias_name}' not found. Run 'clickup alias list'.[/red]")
+        console.print(f"[red]Alias '{alias_name}' not found. Run 'cl alias list'.[/red]")
         raise SystemExit(1)
     stored = aliases[alias_name]  # e.g. "space:12345"
     alias_type, alias_id = stored.split(":", 1)

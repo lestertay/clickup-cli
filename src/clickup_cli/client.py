@@ -28,7 +28,7 @@ class ClickUpClient:
             sys.exit(1)
 
         if response.status_code == 401:
-            console.print("[red]Authentication failed. Check your API token (clickup config init).[/red]")
+            console.print("[red]Authentication failed. Check your API token (cl config init).[/red]")
             sys.exit(1)
         if response.status_code == 404:
             console.print(f"[red]Resource not found: {path}[/red]")

@@ -12,7 +12,7 @@ dependencies = [
 ]
 
 [project.scripts]
-clickup = "clickup_cli.cli:cli"
+cl = "clickup_cli.cli:cli"
 
 [build-system]
 requires = ["uv_build>=0.9.26,<0.10.0"]
