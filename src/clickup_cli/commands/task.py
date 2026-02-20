@@ -105,10 +105,11 @@ def task_create(list_id, name, description, status, priority, assignee, due_date
 @click.option("-s", "--status", default=None, help="New status.")
 @click.option("-p", "--priority", type=click.Choice(["1", "2", "3", "4"], case_sensitive=False), default=None, help="Priority: 1=urgent, 2=high, 3=normal, 4=low.")
 @click.option("-a", "--assignee", default=None, help="Assignee user ID to add.")
+@click.option("-r", "--remove-assignee", default=None, help="Assignee user ID to remove.")
 @click.option("-D", "--due-date", default=None, help="Due date (YYYY-MM-DD).")
 @click.option("-t", "--tag", multiple=True, help="Tag(s) to set.")
 @click.option("-T", "--time-estimate", default=None, help="Time estimate (e.g. 2h, 30m, 1h30m).")
-def task_update(task_id, name, description, status, priority, assignee, due_date, tag, time_estimate):
+def task_update(task_id, name, description, status, priority, assignee, remove_assignee, due_date, tag, time_estimate):
     """Update an existing task."""
     client = get_client()
     task_data = {}
@@ -120,8 +121,13 @@ def task_update(task_id, name, description, status, priority, assignee, due_date
         task_data["status"] = status
     if priority:
         task_data["priority"] = int(priority)
+    assignees_payload = {}
     if assignee:
-        task_data["assignees"] = {"add": [int(assignee)]}
+        assignees_payload["add"] = [int(assignee)]
+    if remove_assignee:
+        assignees_payload["rem"] = [int(remove_assignee)]
+    if assignees_payload:
+        task_data["assignees"] = assignees_payload
     if due_date:
         from datetime import datetime
 
