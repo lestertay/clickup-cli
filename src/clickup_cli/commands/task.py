@@ -50,12 +50,18 @@ def task_view(task_id, user_id):
     """View a task by ID, or list open tasks assigned to a user."""
     client = get_client()
     if task_id:
+        if user_id is not None:
+            console.print("[yellow]Warning: --user is ignored when a task_id is provided.[/yellow]")
         task = client.get_task(task_id)
         print_task_detail(task)
     else:
         if user_id is None:
             config = load_config()
-            user_id = config["user_id"]
+            user_id = config.get("user_id")
+            if user_id is None:
+                console.print("[red]user_id not found in config. Run 'cl config init'.[/red]")
+                raise SystemExit(1)
+            user_id = str(user_id)
         workspace_id = get_workspace_id()
         tasks = client.get_workspace_tasks(workspace_id, user_id)
         print_tasks(tasks)
