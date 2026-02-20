@@ -1,10 +1,23 @@
 import click
 from rich.console import Console
 
-from clickup_cli.helpers import get_client, resolve_alias
+from clickup_cli.helpers import get_client, get_workspace_id, resolve_alias
+from clickup_cli.config import load_config
 from clickup_cli.formatting import print_task_detail, print_tasks
 
 console = Console()
+
+
+def _parse_time_estimate(value: str) -> int:
+    """Parse a time string (e.g. '2h', '30m', '1h30m') to milliseconds."""
+    import re
+    match = re.fullmatch(r"(?:(\d+)h)?(?:(\d+)m)?", value)
+    if not match or not any(match.groups()):
+        console.print(f"[red]Invalid time estimate '{value}'. Use format like '2h', '30m', or '1h30m'.[/red]")
+        raise SystemExit(1)
+    hours = int(match.group(1) or 0)
+    minutes = int(match.group(2) or 0)
+    return (hours * 3600 + minutes * 60) * 1000
 
 
 @click.group("task")
@@ -31,12 +44,21 @@ def task_list(list_id, status, assignee):
 
 
 @task_group.command("view")
-@click.argument("task_id")
-def task_view(task_id):
-    """View a single task's details."""
+@click.argument("task_id", required=False, default=None)
+@click.option("-u", "--user", "user_id", default=None, help="User ID to filter by (default: current user).")
+def task_view(task_id, user_id):
+    """View a task by ID, or list open tasks assigned to a user."""
     client = get_client()
-    task = client.get_task(task_id)
-    print_task_detail(task)
+    if task_id:
+        task = client.get_task(task_id)
+        print_task_detail(task)
+    else:
+        if user_id is None:
+            config = load_config()
+            user_id = config["user_id"]
+        workspace_id = get_workspace_id()
+        tasks = client.get_workspace_tasks(workspace_id, user_id)
+        print_tasks(tasks)
 
 
 @task_group.command("create")
@@ -48,7 +70,8 @@ def task_view(task_id):
 @click.option("-a", "--assignee", default=None, help="Assignee user ID.")
 @click.option("-D", "--due-date", default=None, help="Due date (YYYY-MM-DD).")
 @click.option("-t", "--tag", multiple=True, help="Tag(s) to add.")
-def task_create(list_id, name, description, status, priority, assignee, due_date, tag):
+@click.option("-T", "--time-estimate", default=None, help="Time estimate (e.g. 2h, 30m, 1h30m).")
+def task_create(list_id, name, description, status, priority, assignee, due_date, tag, time_estimate):
     """Create a new task."""
     list_id = resolve_alias(list_id, "list")
     client = get_client()
@@ -68,6 +91,8 @@ def task_create(list_id, name, description, status, priority, assignee, due_date
         task_data["due_date"] = int(dt.timestamp() * 1000)
     if tag:
         task_data["tags"] = list(tag)
+    if time_estimate:
+        task_data["time_estimate"] = _parse_time_estimate(time_estimate)
 
     task = client.create_task(list_id, task_data)
     console.print(f"[green]Task created: {task.name} ({task.id})[/green]")
@@ -82,7 +107,8 @@ def task_create(list_id, name, description, status, priority, assignee, due_date
 @click.option("-a", "--assignee", default=None, help="Assignee user ID to add.")
 @click.option("-D", "--due-date", default=None, help="Due date (YYYY-MM-DD).")
 @click.option("-t", "--tag", multiple=True, help="Tag(s) to set.")
-def task_update(task_id, name, description, status, priority, assignee, due_date, tag):
+@click.option("-T", "--time-estimate", default=None, help="Time estimate (e.g. 2h, 30m, 1h30m).")
+def task_update(task_id, name, description, status, priority, assignee, due_date, tag, time_estimate):
     """Update an existing task."""
     client = get_client()
     task_data = {}
@@ -103,6 +129,8 @@ def task_update(task_id, name, description, status, priority, assignee, due_date
         task_data["due_date"] = int(dt.timestamp() * 1000)
     if tag:
         task_data["tags"] = list(tag)
+    if time_estimate:
+        task_data["time_estimate"] = _parse_time_estimate(time_estimate)
 
     if not task_data:
         console.print("[yellow]No updates specified.[/yellow]")
