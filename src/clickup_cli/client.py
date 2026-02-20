@@ -79,8 +79,9 @@ class ClickUpClient:
         data = self._request("GET", f"/task/{task_id}")
         return Task.from_api(data)
 
-    def get_workspace_tasks(self, team_id: str, assignee_id: int) -> list[Task]:
-        params = {"assignees[]": [assignee_id], "include_closed": "false"}
+    def get_workspace_tasks(self, team_id: str, assignee_id: str) -> list[Task]:
+        # include_closed=false is intentional: this command only shows open tasks
+        params = {"assignees[]": [int(assignee_id)], "include_closed": "false"}
         data = self._request("GET", f"/team/{team_id}/task", params=params)
         return [Task.from_api(t) for t in data.get("tasks", [])]
 
