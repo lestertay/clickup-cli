@@ -80,8 +80,13 @@ class ClickUpClient:
         return Task.from_api(data)
 
     def get_workspace_tasks(self, team_id: str, assignee_id: str) -> list[Task]:
+        try:
+            assignee_int = int(assignee_id)
+        except ValueError:
+            console.print(f"[red]Invalid user ID '{assignee_id}'. Must be a numeric ID.[/red]")
+            sys.exit(1)
         # include_closed=false is intentional: this command only shows open tasks
-        params = {"assignees[]": [int(assignee_id)], "include_closed": "false"}
+        params = {"assignees[]": [assignee_int], "include_closed": "false"}
         data = self._request("GET", f"/team/{team_id}/task", params=params)
         return [Task.from_api(t) for t in data.get("tasks", [])]
 

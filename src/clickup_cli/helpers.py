@@ -46,3 +46,17 @@ def resolve_alias(value: str, expected_type: str | None = None) -> str:
         console.print(f"[red]Alias '{alias_name}' is a {alias_type}, but a {expected_type} ID is expected.[/red]")
         raise SystemExit(1)
     return alias_id
+
+
+def get_user_id() -> str:
+    """Load user_id from config."""
+    try:
+        config = load_config()
+    except (FileNotFoundError, ValueError) as e:
+        console.print(f"[red]{e}[/red]")
+        raise SystemExit(1)
+    uid = config.get("user_id")
+    if not uid:
+        console.print("[red]No user_id in config. Run 'cl config init'.[/red]")
+        raise SystemExit(1)
+    return str(uid)
