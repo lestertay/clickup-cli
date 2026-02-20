@@ -42,6 +42,10 @@ class ClickUpClient:
 
         return response.json()
 
+    def get_user(self) -> dict:
+        data = self._request("GET", "/user")
+        return data.get("user", {})
+
     def get_teams(self) -> list[dict]:
         data = self._request("GET", "/team")
         return data.get("teams", [])
@@ -74,6 +78,11 @@ class ClickUpClient:
     def get_task(self, task_id: str) -> Task:
         data = self._request("GET", f"/task/{task_id}")
         return Task.from_api(data)
+
+    def get_workspace_tasks(self, team_id: str, assignee_id: int) -> list[Task]:
+        params = {"assignees[]": [assignee_id], "include_closed": "false"}
+        data = self._request("GET", f"/team/{team_id}/task", params=params)
+        return [Task.from_api(t) for t in data.get("tasks", [])]
 
     def create_task(self, list_id: str, task_data: dict) -> Task:
         data = self._request("POST", f"/list/{list_id}/task", json=task_data)
