@@ -33,7 +33,7 @@ def task_list(list_id, status, assignee):
     """List tasks in a ClickUp list."""
     list_id = resolve_alias(list_id, "list")
     client = get_client()
-    filters = {}
+    filters = {"reverse": True}
     if status:
         filters["statuses"] = [status]
     if assignee:

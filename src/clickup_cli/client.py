@@ -72,6 +72,8 @@ class ClickUpClient:
             params["statuses[]"] = filters["statuses"]
         if "assignees" in filters:
             params["assignees[]"] = filters["assignees"]
+        if filters.get("reverse"):
+            params["reverse"] = "true"
         data = self._request("GET", f"/list/{list_id}/task", params=params)
         return [Task.from_api(t) for t in data.get("tasks", [])]
 
