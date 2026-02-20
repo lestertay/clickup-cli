@@ -21,6 +21,11 @@ def config_init():
     from clickup_cli.client import ClickUpClient
 
     client = ClickUpClient(api_token)
+    user = client.get_user()
+    if not user:
+        console.print("[red]Could not fetch user info. Check your API token.[/red]")
+        raise SystemExit(1)
+    console.print(f"Authenticated as: [bold]{user.get('username', user.get('email', 'unknown'))}[/bold]")
     teams = client.get_teams()
 
     if not teams:
@@ -39,6 +44,8 @@ def config_init():
 
     config = {
         "api_token": api_token,
+        "user_id": user["id"],
+        "username": user.get("username", user.get("email", "")),
         "workspace_id": workspace["id"],
         "workspace_name": workspace["name"],
     }

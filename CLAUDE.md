@@ -30,3 +30,7 @@ This is a CLI tool for managing ClickUp resources (spaces, folders, lists, tasks
 **Adding a new command group:** Create a file in `commands/`, define a `@click.group`, import and register it in `cli.py` with `cli.add_command()`.
 
 **Adding a new API resource:** Add a dataclass with `from_api()` in `models.py`, add client methods in `client.py`, add a print function in `formatting.py`, then create the command group.
+
+## Skill Maintenance
+
+Whenever CLI commands are added, removed, or changed, update the corresponding skill file at `~/.claude/skills/clickup-task-management/SKILL.md` to keep the Quick Reference table and examples in sync.

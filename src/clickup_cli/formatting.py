@@ -20,6 +20,19 @@ def _format_due_date(due_date: str | None) -> str:
         return due_date
 
 
+def _format_time_estimate(ms: int | None) -> str:
+    """Convert milliseconds to human-readable time string."""
+    if not ms:
+        return "-"
+    total_minutes = ms // 60000
+    hours, minutes = divmod(total_minutes, 60)
+    if hours and minutes:
+        return f"{hours}h{minutes}m"
+    if hours:
+        return f"{hours}h"
+    return f"{minutes}m"
+
+
 PRIORITY_COLORS = {
     "urgent": "red",
     "high": "yellow",
@@ -63,6 +76,7 @@ def print_tasks(tasks: list[Task]) -> None:
     table.add_column("Priority")
     table.add_column("Assignees")
     table.add_column("Due Date")
+    table.add_column("Estimate")
     table.add_column("Tags")
 
     for t in tasks:
@@ -74,6 +88,7 @@ def print_tasks(tasks: list[Task]) -> None:
             f"[{priority_style}]{t.priority or '-'}[/{priority_style}]" if priority_style else (t.priority or "-"),
             ", ".join(t.assignees) or "-",
             _format_due_date(t.due_date),
+            _format_time_estimate(t.time_estimate),
             ", ".join(t.tags) or "-",
         )
 
@@ -86,6 +101,7 @@ def print_task_detail(task: Task) -> None:
     console.print(f"  Priority:  {task.priority or '-'}")
     console.print(f"  Assignees: {', '.join(task.assignees) or '-'}")
     console.print(f"  Due Date:  {_format_due_date(task.due_date)}")
+    console.print(f"  Estimate:  {_format_time_estimate(task.time_estimate)}")
     console.print(f"  Tags:      {', '.join(task.tags) or '-'}")
     if task.description:
         console.print(f"\n  {task.description}")

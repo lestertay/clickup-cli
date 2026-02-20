@@ -51,6 +51,7 @@ class Task:
     assignees: list[str] = field(default_factory=list)
     priority: str | None = None
     due_date: str | None = None
+    time_estimate: int | None = None
     tags: list[str] = field(default_factory=list)
     description: str = ""
     url: str = ""
@@ -65,6 +66,7 @@ class Task:
             assignees=[a.get("username", a.get("email", "")) for a in data.get("assignees", [])],
             priority=data.get("priority", {}).get("priority") if data.get("priority") else None,
             due_date=data.get("due_date"),
+            time_estimate=data.get("time_estimate"),
             tags=[t["name"] for t in data.get("tags", [])],
             description=data.get("description", ""),
             url=data.get("url", ""),

@@ -116,7 +116,8 @@ cl task create -l @sprint42 \
   -a 12345678 \
   -D 2025-06-01 \
   -t urgent \
-  -t backend
+  -t backend \
+  -T 2h30m
 
 cl task create -l @everything -n "Investigate Clickup API results" -d "Look for more data Clickup API can provide" -a "Lester Tay"
 
@@ -127,7 +128,8 @@ cl task update TASK_ID -s "complete"
 cl task update TASK_ID \
   -n "Updated title" \
   -p 1 \
-  -a 12345678
+  -a 12345678 \
+  -T 1h
 
 # Delete a task (with confirmation prompt)
 cl task delete TASK_ID
