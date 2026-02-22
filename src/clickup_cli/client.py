@@ -40,6 +40,8 @@ class ClickUpClient:
             console.print(f"[red]API error ({response.status_code}): {response.text}[/red]")
             sys.exit(1)
 
+        if not response.content:
+            return {}
         return response.json()
 
     def get_user(self) -> dict:
