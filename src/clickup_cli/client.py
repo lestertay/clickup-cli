@@ -94,6 +94,21 @@ class ClickUpClient:
         data = self._request("GET", f"/team/{team_id}/task", params=params)
         return [Task.from_api(t) for t in data.get("tasks", [])]
 
+    def search_tasks(self, team_id: str, name: str, include_closed: bool = False) -> list[Task]:
+        params = {"include_closed": str(include_closed).lower(), "page": 0}
+        results = []
+        query = name.lower()
+        while True:
+            data = self._request("GET", f"/team/{team_id}/task", params=params)
+            tasks = data.get("tasks", [])
+            if not tasks:
+                break
+            for t in tasks:
+                if query in t.get("name", "").lower():
+                    results.append(Task.from_api(t))
+            params["page"] += 1
+        return results
+
     def create_task(self, list_id: str, task_data: dict) -> Task:
         data = self._request("POST", f"/list/{list_id}/task", json=task_data)
         return Task.from_api(data)

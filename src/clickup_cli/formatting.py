@@ -70,7 +70,7 @@ def print_lists(lists: list[TaskList]) -> None:
 
 def print_tasks(tasks: list[Task]) -> None:
     table = Table(title="Tasks")
-    table.add_column("ID", style="dim")
+    table.add_column("ID", style="dim", no_wrap=True)
     table.add_column("Name", style="bold")
     table.add_column("Status")
     table.add_column("Priority")

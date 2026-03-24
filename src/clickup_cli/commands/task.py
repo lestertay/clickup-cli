@@ -61,6 +61,20 @@ def task_view(task_id, user_id):
         print_tasks(tasks)
 
 
+@task_group.command("search")
+@click.option("-q", "--query", required=True, help="Search tasks by name.")
+@click.option("--include-closed", is_flag=True, default=False, help="Include closed tasks.")
+def task_search(query, include_closed):
+    """Search tasks by title across the workspace."""
+    client = get_client()
+    workspace_id = get_workspace_id()
+    tasks = client.search_tasks(workspace_id, query, include_closed=include_closed)
+    if not tasks:
+        console.print("[yellow]No tasks found.[/yellow]")
+        return
+    print_tasks(tasks)
+
+
 @task_group.command("create")
 @click.option("-l", "--list-id", required=True, help="List ID to create the task in.")
 @click.option("-n", "--name", required=True, help="Task name.")
